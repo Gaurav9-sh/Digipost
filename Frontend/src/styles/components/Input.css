@@ -1,0 +1,123 @@
+.input-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--space-4);
+  width: 100%;
+}
+
+.input-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-1);
+}
+
+.required-mark {
+  color: var(--color-error-500);
+  margin-left: var(--space-1);
+}
+
+.input-field {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border-medium);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+  transition: all var(--transition-fast) var(--transition-ease);
+  width: 100%;
+  outline: none;
+}
+
+.input-field:focus {
+  border-color: var(--color-primary-400);
+  box-shadow: 0 0 0 2px var(--color-primary-100);
+}
+
+.dark .input-field:focus {
+  border-color: var(--color-primary-400);
+  box-shadow: 0 0 0 2px var(--color-primary-900);
+}
+
+.input-field::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.input-field:disabled {
+  background-color: var(--color-bg-secondary);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.input-error {
+  font-size: var(--font-size-xs);
+  color: var(--color-error-500);
+  margin-top: var(--space-1);
+}
+
+.has-error .input-field {
+  border-color: var(--color-error-500);
+}
+
+.has-error .input-field:focus {
+  box-shadow: 0 0 0 2px var(--color-error-100);
+}
+
+.dark .has-error .input-field:focus {
+  box-shadow: 0 0 0 2px var(--color-error-900);
+}
+
+/* File input styles */
+input[type="file"] {
+  cursor: pointer;
+}
+
+.hidden-input {
+  display: none;
+}
+
+/* Checkbox and Radio styles */
+input[type="checkbox"],
+input[type="radio"] {
+  margin-right: var(--space-2);
+}
+
+/* Select styles */
+select.input-field {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-3) center;
+  padding-right: var(--space-8);
+}
+
+/* Textarea styles */
+textarea.input-field {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Input sizes */
+.input-small .input-field {
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--font-size-xs);
+}
+
+.input-large .input-field {
+  padding: var(--space-4);
+  font-size: var(--font-size-lg);
+}
+
+/* Dark mode adjustments */
+.dark .input-field {
+  background-color: var(--color-bg-tertiary);
+  border-color: var(--color-border-medium);
+  color: var(--color-text-primary);
+}
+
+.dark .input-field::placeholder {
+  color: var(--color-text-tertiary);
+}

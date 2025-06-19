@@ -1,0 +1,213 @@
+.letter-card {
+  background-color: var(--color-bg-tertiary);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-4);
+  transition: transform var(--transition-fast) var(--transition-ease), 
+              box-shadow var(--transition-fast) var(--transition-ease);
+  overflow: hidden;
+  animation: fadeIn var(--transition-normal) var(--transition-ease);
+}
+
+.letter-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.letter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-3);
+}
+
+.author-info {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+.author-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+  margin-right: var(--space-3);
+}
+
+.author-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.author-name {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  margin: 0;
+  color: var(--color-text-primary);
+}
+
+.author-handle {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  margin: 0;
+}
+
+.letter-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.letter-date {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+.letter-visibility {
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-sm);
+  display: flex;
+  align-items: center;
+}
+
+.letter-content-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.letter-subject {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-2);
+  color: var(--color-text-primary);
+}
+
+.letter-content {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  margin-bottom: var(--space-3);
+  color: var(--color-text-secondary);
+}
+
+.letter-attachment {
+  margin-top: var(--space-3);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.attachment-preview {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+}
+
+.letter-actions {
+  display: flex;
+  align-items: center;
+  margin-top: var(--space-4);
+  border-top: 1px solid var(--color-border-light);
+  padding-top: var(--space-3);
+}
+
+.action-button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-lg);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-fast) var(--transition-ease);
+  margin-right: var(--space-4);
+  text-decoration: none;
+}
+
+.action-button:hover {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+
+.action-button.liked {
+  color: var(--color-error-500);
+}
+
+.action-button.liked:hover {
+  background-color: var(--color-error-50);
+  color: var(--color-error-600);
+}
+
+.dark .action-button.liked:hover {
+  background-color: var(--color-error-900);
+  color: var(--color-error-400);
+}
+
+.action-count {
+  font-size: var(--font-size-xs);
+}
+
+/* Letter card variants */
+.letter-card.private {
+  background: linear-gradient(to right, var(--color-bg-tertiary), var(--color-primary-50));
+}
+
+.dark .letter-card.private {
+  background: linear-gradient(to right, var(--color-bg-tertiary), var(--color-primary-900));
+}
+
+.letter-card.public {
+  background: linear-gradient(to right, var(--color-bg-tertiary), var(--color-accent-50));
+}
+
+.dark .letter-card.public {
+  background: linear-gradient(to right, var(--color-bg-tertiary), var(--color-accent-900));
+}
+
+/* Animation for new letters */
+.letter-card.new {
+  animation: highlightNew 2s var(--transition-ease);
+}
+
+@keyframes highlightNew {
+  0% {
+    box-shadow: 0 0 0 2px var(--color-primary-400);
+  }
+  100% {
+    box-shadow: var(--shadow-md);
+  }
+}
+
+/* Responsive styles */
+@media (max-width: 640px) {
+  .letter-card {
+    padding: var(--space-3) var(--space-4);
+  }
+  
+  .author-avatar {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .letter-subject {
+    font-size: var(--font-size-base);
+  }
+  
+  .letter-content {
+    font-size: var(--font-size-sm);
+  }
+  
+  .letter-actions {
+    flex-wrap: wrap;
+  }
+  
+  .action-button {
+    padding: var(--space-2);
+    margin-right: var(--space-2);
+  }
+}

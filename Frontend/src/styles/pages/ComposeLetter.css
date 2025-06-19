@@ -1,0 +1,253 @@
+.compose-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.compose-container {
+  flex: 1;
+  padding: var(--space-8) var(--space-4);
+  margin-top: 70px;
+  background: linear-gradient(135deg, var(--color-primary-50), var(--color-bg-primary));
+}
+
+.dark .compose-container {
+  background: linear-gradient(135deg, var(--color-primary-950), var(--color-bg-primary));
+}
+
+.compose-card {
+  background-color: var(--color-bg-tertiary);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--space-8);
+  animation: slideIn var(--transition-normal) var(--transition-ease);
+}
+
+.compose-header {
+  text-align: center;
+  margin-bottom: var(--space-6);
+}
+
+.compose-title {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-2);
+  color: var(--color-text-primary);
+}
+
+.compose-subtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-text-tertiary);
+}
+
+.compose-error {
+  background-color: var(--color-error-50);
+  border-left: 3px solid var(--color-error-500);
+  color: var(--color-error-700);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-4);
+  font-size: var(--font-size-sm);
+}
+
+.dark .compose-error {
+  background-color: var(--color-error-900);
+  color: var(--color-error-300);
+}
+
+.compose-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.editor-container {
+  margin-bottom: var(--space-4);
+}
+
+.editor-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-1);
+}
+
+/* React Quill styles */
+.quill {
+  background-color: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border-medium);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast) var(--transition-ease);
+}
+
+.quill:focus-within {
+  border-color: var(--color-primary-400);
+  box-shadow: 0 0 0 2px var(--color-primary-100);
+}
+
+.dark .quill:focus-within {
+  box-shadow: 0 0 0 2px var(--color-primary-900);
+}
+
+.quill.has-error {
+  border-color: var(--color-error-500);
+}
+
+.quill.has-error:focus-within {
+  box-shadow: 0 0 0 2px var(--color-error-100);
+}
+
+.dark .quill.has-error:focus-within {
+  box-shadow: 0 0 0 2px var(--color-error-900);
+}
+
+.ql-toolbar {
+  border-top-left-radius: var(--radius-lg);
+  border-top-right-radius: var(--radius-lg);
+  border-color: var(--color-border-medium) !important;
+  background-color: var(--color-bg-secondary);
+}
+
+.ql-container {
+  border-bottom-left-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
+  border-color: var(--color-border-medium) !important;
+  font-family: var(--font-family) !important;
+  font-size: var(--font-size-base) !important;
+  min-height: 200px;
+}
+
+.ql-editor {
+  min-height: 200px;
+  color: var(--color-text-primary);
+}
+
+.ql-editor.ql-blank::before {
+  color: var(--color-text-tertiary) !important;
+  font-style: normal !important;
+}
+
+/* Compose options */
+.compose-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: var(--space-6) 0;
+  padding: var(--space-4);
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+}
+
+.option-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.attachment-button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: none;
+  border: 1px dashed var(--color-border-medium);
+  border-radius: var(--radius-lg);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast) var(--transition-ease);
+}
+
+.attachment-button:hover {
+  border-color: var(--color-primary-400);
+  color: var(--color-primary-600);
+  background-color: var(--color-primary-50);
+}
+
+.dark .attachment-button:hover {
+  background-color: var(--color-primary-900);
+  color: var(--color-primary-400);
+}
+
+.hidden-input {
+  display: none;
+}
+
+.file-name {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.schedule-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.schedule-input {
+  margin-left: auto;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-border-medium);
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+}
+
+.visibility-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+}
+
+.visibility-checkbox {
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border-medium);
+  background-color: var(--color-bg-tertiary);
+  cursor: pointer;
+}
+
+.compose-actions {
+  margin-top: var(--space-6);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .compose-card {
+    padding: var(--space-4);
+  }
+  
+  .compose-title {
+    font-size: var(--font-size-2xl);
+  }
+  
+  .ql-container {
+    min-height: 150px;
+  }
+  
+  .ql-editor {
+    min-height: 150px;
+  }
+  
+  .schedule-label {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .schedule-input {
+    margin-left: 0;
+    width: 100%;
+  }
+}
