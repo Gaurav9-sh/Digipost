@@ -16,7 +16,6 @@ function Sidebar({ isOpen, onClose }) {
   const { currentUser } = useAuth()
   const location = useLocation()
   const sidebarRef = useRef(null)
-
   // Close sidebar on route change (mobile)
   useEffect(() => {
     if (isOpen) onClose()
@@ -47,7 +46,7 @@ function Sidebar({ isOpen, onClose }) {
           )}
           <div className="user-details">
             <h3 className="user-name">{currentUser?.name}</h3>
-            <p className="user-handle">@{currentUser?.handle}</p>
+            <p className="user-handle">@{currentUser?.handle_name}</p>
           </div>
         </div>
         <button className="close-sidebar" onClick={onClose} aria-label="Close sidebar">

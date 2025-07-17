@@ -4,6 +4,28 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const {User} = require('../models/User.js');
 
+
+router.get('/verify', async (req, res) => {
+  // console.log(req.cookies); // Log all cookies to verify their presence
+  const token = req.cookies?.digitalPostboxToken; // Optional chaining to prevent errors
+  
+  if (!token) {
+    console.log("No token found in cookies");
+    return res.status(401).json({ message: 'Access denied. No token provided.' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Verify token using the secret
+    const user = await User.findById(decoded.id);
+    // console.log("user details",user)
+    res.status(200).json({ user:user }); // Send the decoded user data
+  } catch (error) {
+    console.error('Token verification error:', error.message);
+    res.status(400).json({ message: 'Invalid or expired token.' });
+  }
+});
+
+
 // Signup Route
 router.post('/signup', async (req, res) => {
   try {
@@ -112,4 +134,14 @@ router.post('/logout', (req, res) => {
   }
 });
 
+router.get('/user-info', async (req, res) => {
+  console.log("Basic info called")
+  try {
+    const users = await User.find({}, '_id handle_name profile_image');
+    res.status(200).json(users);
+  } catch (error) {
+    console.error('Error fetching basic user info:', error);
+    res.status(500).json({ message: 'Server error while fetching users.' });
+  }
+});
 module.exports = router;

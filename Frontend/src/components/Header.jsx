@@ -53,7 +53,7 @@ function Header() {
             <>
               <Link to="/home\" className="nav-link">Home</Link>
               <Link to="/compose" className="nav-link">Compose</Link>
-              <Link to={`/profile/${currentUser?.handle}`} className="nav-link">Profile</Link>
+              <Link to={`/profile/${currentUser?.handle_name}`} className="nav-link">Profile</Link>
               <Link to="/settings" className="nav-link">Settings</Link>
               <button onClick={handleLogout} className="nav-link btn-primary">Logout</button>
             </>

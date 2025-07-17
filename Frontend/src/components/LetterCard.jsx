@@ -7,6 +7,8 @@ function LetterCard({ letter, isPublic = true }) {
   const [liked, setLiked] = useState(letter.liked || false)
   const [likesCount, setLikesCount] = useState(letter.likes || 0)
   
+  
+  console.log("Letter details from backend:",letter)
   const handleLike = (e) => {
     e.preventDefault()
     e.stopPropagation()
@@ -39,19 +41,19 @@ function LetterCard({ letter, isPublic = true }) {
   return (
     <div className={`letter-card ${isPublic ? 'public' : 'private'}`}>
       <div className="letter-header">
-        <Link to={`/profile/${letter.author.handle}`} className="author-info">
+        <Link to={`/profile/${letter.sender.handle_name}`} className="author-info">
           <img 
-            src={letter.author.avatar} 
-            alt={`${letter.author.name}'s avatar`} 
+            src={letter.sender.profile_image} 
+            alt={`${letter.sender.name}'s avatar`} 
             className="author-avatar" 
           />
           <div className="author-details">
-            <h3 className="author-name">{letter.author.name}</h3>
-            <p className="author-handle">@{letter.author.handle}</p>
+            <h3 className="author-name">{letter.sender.name}</h3>
+            <p className="author-handle">@{letter.sender.handle_name}</p>
           </div>
         </Link>
         <div className="letter-meta">
-          <span className="letter-date">{formatDate(letter.date)}</span>
+          <span className="letter-date">{formatDate(letter.sentAt)}</span>
           <span className="letter-visibility">
             {isPublic ? <FaGlobe title="Public" /> : <FaLock title="Private" />}
           </span>
@@ -60,7 +62,10 @@ function LetterCard({ letter, isPublic = true }) {
       
       <Link to={isPublic ? `/post/${letter.id}` : `/home?letter=${letter.id}`} className="letter-content-link">
         <h4 className="letter-subject">{letter.subject}</h4>
-        <div className="letter-content">{truncateContent(letter.content)}</div>
+       <div
+  className="letter-content"
+  dangerouslySetInnerHTML={{ __html: truncateContent(letter.content) }}
+></div>
         
         {letter.attachment && (
           <div className="letter-attachment">

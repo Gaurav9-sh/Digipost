@@ -33,18 +33,26 @@ const userSchema = new mongoose.Schema({
     type: String,
     default:"",
   },
-  followers:{
-    type:Number,
-    default:0
-  },
-  following:{
-    type:Number,
-    default:0
-  },
-  lettersCount:{
-    type:Number,
-    default:0
-  }
+
+  followers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  }],
+
+  following: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  }],
+
+  inbox: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Letters',
+  }],
+
+  sent: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Letters',
+  }],
 });
 
 // Letter Schema
@@ -54,18 +62,14 @@ const letterSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
-  recipient: {
-    type: mongoose.Schema.Types.ObjectId, // Reference to the recipient's user ID
+ recipients: [{
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
-  },
+  }],
   content: {
     type: String,
     required: true,
-  },
-  isPublic: {
-    type: Boolean, // Whether the letter is public or private
-    default: false,
   },
   sentAt: {
     type: Date,
@@ -73,6 +77,29 @@ const letterSchema = new mongoose.Schema({
   },
 });
 
+// Public Letter Schema
+const publicletterSchema = new mongoose.Schema({
+  sender: {
+    type: mongoose.Schema.Types.ObjectId, // Reference to the sender's user ID
+    ref: 'User',
+    required: true,
+  },
+  subject:{
+    type: String,
+    required:true
+  },
+  content: {
+    type: String,
+    required: true,
+  },
+  attachment:{
+    type: String
+  },
+  sentAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
 const postSchema = new mongoose.Schema({
   user: {
@@ -115,6 +142,43 @@ const postSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
+
+const publicFeedSchema = new mongoose.Schema({
+  subject: {
+    type: String,
+    required: true, // Subject is mandatory
+    trim: true, // Remove extra spaces
+  },
+  content: {
+    type: String,
+    required: true, // Content is mandatory
+    trim: true,
+  },
+  sentAt: {
+    type: Date,
+    default: Date.now, // Automatically set to current date
+  },
+  author: {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId, // Reference to the User model
+      ref: 'User',
+      required: true,
+    },
+    name: {
+      type: String, // Author's display name
+      required: true,
+    },
+    handle: {
+      type: String, // Unique username or handle
+      required: true,
+    },
+    avatar: {
+      type: String, // URL for profile picture
+      default: '',
+    },
+  },
+});
+
 // Hash the password before saving
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
@@ -133,5 +197,7 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
 module.exports = {
   User: mongoose.model('User', userSchema),
   Post: mongoose.model('Post', postSchema),
-  Letters: mongoose.model('Letters',letterSchema)
+  Letters: mongoose.model('Letters',letterSchema),
+  publicletters:mongoose.model('publicletters',publicletterSchema),
+  publicFeed:mongoose.model('publicFeed',publicFeedSchema)
 };

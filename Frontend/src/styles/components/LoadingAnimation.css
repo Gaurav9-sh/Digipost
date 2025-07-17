@@ -1,0 +1,42 @@
+/* LoadingAnimation.css */
+.loading-animation-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #1a1a2e;
+  color: #fff;
+  font-family: "Arial", sans-serif;
+}
+
+.loading-text {
+  font-size: 2rem;
+  font-weight: bold;
+  position: relative;
+}
+
+.dots span {
+  animation: blink 1.5s infinite;
+  display: inline-block;
+  font-size: 2rem;
+}
+
+.dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes blink {
+  0%, 20% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef,useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import Header from '../components/Header.jsx'
@@ -8,6 +8,9 @@ import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import { FaPaperPlane, FaImage, FaClock } from 'react-icons/fa'
 import '../styles/pages/ComposeLetter.css'
+import axios from 'axios'
+import { DataContext } from '../context/DataContext.jsx'
+
 
 function ComposeLetter() {
   const { currentUser } = useAuth()
@@ -16,18 +19,47 @@ function ComposeLetter() {
   const [isPublic, setIsPublic] = useState(false)
   const [scheduleDate, setScheduleDate] = useState('')
   const [formData, setFormData] = useState({
+    sender:currentUser._id,
     subject: '',
     content: '',
     attachment: null
   })
+  
   const [errors, setErrors] = useState({})
   const fileInputRef = useRef(null)
+  const {users} = useContext(DataContext)
   
+//   const users = [
+//   { id: 'u1', name: 'Alice' },
+//   { id: 'u2', name: 'Bob' },
+//   { id: 'u3', name: 'Charlie' },
+// ];
   // Update document title
   useEffect(() => {
     document.title = 'Compose Letter - Digital Postbox'
   }, [])
+   const [showModal, setShowModal] = useState(false);
+  const [selectedRecipients, setSelectedRecipients] = useState([]);
   
+
+  const handleSendClick = () => {
+    setShowModal(true);
+  };
+
+  const handleConfirmSend = async () => {
+    setIsLoading(true);
+    setShowModal(false);
+    await handleSend({ recipients: isPublic ? 'public' : selectedRecipients });
+    setIsLoading(false);
+  };
+
+  const toggleRecipient = (id) => {
+    setSelectedRecipients((prev) =>
+      prev.includes(id)
+        ? prev.filter((i) => i !== id)
+        : [...prev, id]
+    );
+  };
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
@@ -91,28 +123,40 @@ function ComposeLetter() {
     return Object.keys(newErrors).length === 0
   }
   
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    
-    if (!validateForm()) return
-    
-    setIsLoading(true)
-    
-    try {
-      // In a real app, this would make an API call to send the letter
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      
-      // Redirect to home page after successful send
-      navigate('/home')
-    } catch (error) {
-      setErrors(prev => ({ 
-        ...prev, 
-        form: 'Failed to send letter. Please try again.' 
-      }))
-    } finally {
-      setIsLoading(false)
-    }
+const handleSend = async ({ recipients }) => {
+  if (!validateForm()) return;
+
+  setIsLoading(true);
+
+  try {
+    const payload = {
+      ...formData,
+      recipients, // 'public' OR array of user IDs
+    };
+
+    console.log("Sending letter with:", payload);
+
+    const endpoint =
+      recipients === 'public'
+        ? 'http://localhost:5000/api/letters/public-letters/send'
+        : 'http://localhost:5000/api/letters/private-letters/send';
+
+    const response = await axios.post(endpoint, payload);
+
+    console.log("Response from backend", response);
+
+    navigate('/home');
+  } catch (error) {
+    console.error("Error sending letter:", error);
+    setErrors(prev => ({
+      ...prev,
+      form: 'Failed to send letter. Please try again.'
+    }));
+  } finally {
+    setIsLoading(false);
   }
+};
+
   
   const editorModules = {
     toolbar: [
@@ -142,7 +186,7 @@ function ComposeLetter() {
             </div>
           )}
           
-          <form onSubmit={handleSubmit} className="compose-form">
+          <form className="compose-form">
             <Input
               label="Subject"
               type="text"
@@ -210,30 +254,63 @@ function ComposeLetter() {
                   <p className="input-error">{errors.scheduleDate}</p>
                 )}
               </div>
-              
-              <div className="option-group">
-                <label className="visibility-label">
-                  <input
-                    type="checkbox"
-                    checked={isPublic}
-                    onChange={(e) => setIsPublic(e.target.checked)}
-                    className="visibility-checkbox"
-                  />
-                  <span>Make this letter public</span>
-                </label>
-              </div>
             </div>
             
-            <div className="compose-actions">
-              <Button 
-                type="submit" 
-                fullWidth 
-                disabled={isLoading}
-              >
-                <FaPaperPlane />
-                {isLoading ? 'Sending...' : 'Send Letter'}
-              </Button>
+           <div>
+      <div className="compose-actions">
+        <button
+          type="button"
+          className="send-button"
+          disabled={isLoading}
+          onClick={handleSendClick}
+        >
+          <FaPaperPlane style={{ marginRight: '8px' }} />
+          {isLoading ? 'Sending...' : 'Send Letter'}
+        </button>
+      </div>
+
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Select Recipients</h2>
+
+            <label>
+              <input
+                type="checkbox"
+                checked={isPublic}
+                onChange={() => {
+                  setIsPublic(!isPublic);
+                  setSelectedRecipients([]); // Clear user selection when public is checked
+                }}
+              />
+              <span>Send to Public</span>
+            </label>
+
+            {!isPublic && (
+              <div className="user-list">
+                {users.map((user) => (
+                  <label key={user._id}>
+                    <input
+                      type="checkbox"
+                      checked={selectedRecipients.includes(user._id)}
+                      onChange={() => toggleRecipient(user._id)}
+                    />
+                    <span>{user.handle_name}</span>
+                  </label>
+                ))}
+              </div>
+            )}
+
+            <div className="modal-buttons">
+              <button onClick={() => setShowModal(false)}>Cancel</button>
+              <button onClick={handleConfirmSend} disabled={isLoading}>
+                {isLoading ? 'Sending...' : 'Confirm Send'}
+              </button>
             </div>
+          </div>
+        </div>
+      )}
+    </div>
           </form>
         </div>
       </main>

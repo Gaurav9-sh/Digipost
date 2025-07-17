@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import LoadingAnimation from '../components/LoadingAnimation'
 
 const AuthContext = createContext()
 
@@ -12,16 +13,35 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate();
 
-  // Check if user is logged in from localStorage on initial load
-  useEffect(() => {
-    const storedUser = localStorage.getItem('digitalPostboxUser')
-    if (storedUser) {
-      setCurrentUser(JSON.parse(storedUser))
-      setIsAuthenticated(true)
-    }
-    setLoading(false)
-  }, [])
+ useEffect(() => {
+    const verifyUser = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/auth/verify', {
+          withCredentials: true,
+        });
 
+        if (response.status === 200) {
+          console.log(response)
+          setCurrentUser(response.data.user);
+          setIsAuthenticated(true);
+          console.log("User authenticated:", response.data.user);
+        }
+        setLoading(false)
+      } catch (err) {
+        console.error("Authentication failed:", err.response ? err.response.data : err.message);
+        setIsAuthenticated(false);
+        setLoading(false)
+      }
+    };
+
+    verifyUser();
+  }, []); // Empty dependency array ensures this runs only once after the component mounts
+
+ if (loading) {
+    return (
+      <LoadingAnimation/>
+    );
+  }
 
 const login = async (credentials) => {
   try {
