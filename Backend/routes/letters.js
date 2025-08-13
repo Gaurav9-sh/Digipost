@@ -102,12 +102,13 @@ router.get(
   })
 );
 
-// Public Letter Routes
+
 
 // Send a public letter
 router.post(
   '/public-letters/send',
   asyncHandler(async (req, res) => {
+    console.log("letter from frontend:",req.body)
     const { sender,subject, content, attachment } = req.body;
 
     if (!sender || !content || !subject) {

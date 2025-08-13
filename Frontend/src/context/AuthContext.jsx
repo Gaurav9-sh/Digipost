@@ -67,15 +67,13 @@ const login = async (credentials) => {
 const signup = (userData) => {
   return new Promise(async (resolve, reject) => {
     try {
-      // Replace 'http://localhost:5000/api/signup' with your actual backend API endpoint
       
       const response = await axios.post('http://localhost:5000/api/auth/signup', userData);
 
-      const user = response.data; // Assuming the backend returns the created user data
+      const user = response.data; 
       setCurrentUser(user);
       setIsAuthenticated(false);
       navigate('/signin')
-      // localStorage.setItem('digitalPostboxUser', JSON.stringify(user));
       resolve(user);
     } catch (error) {
       console.error('Error during signup:', error);

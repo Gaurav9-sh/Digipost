@@ -7,8 +7,7 @@ function LetterCard({ letter, isPublic = true }) {
   const [liked, setLiked] = useState(letter.liked || false)
   const [likesCount, setLikesCount] = useState(letter.likes || 0)
   
-  
-  console.log("Letter details from backend:",letter)
+ 
   const handleLike = (e) => {
     e.preventDefault()
     e.stopPropagation()

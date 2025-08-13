@@ -17,24 +17,18 @@ function ComposeLetter() {
   const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(false)
   const [isPublic, setIsPublic] = useState(false)
-  const [scheduleDate, setScheduleDate] = useState('')
   const [formData, setFormData] = useState({
     sender:currentUser._id,
     subject: '',
     content: '',
-    attachment: null
+    attachment: '',
   })
   
   const [errors, setErrors] = useState({})
   const fileInputRef = useRef(null)
   const {users} = useContext(DataContext)
   
-//   const users = [
-//   { id: 'u1', name: 'Alice' },
-//   { id: 'u2', name: 'Bob' },
-//   { id: 'u3', name: 'Charlie' },
-// ];
-  // Update document title
+
   useEffect(() => {
     document.title = 'Compose Letter - Digital Postbox'
   }, [])
@@ -79,25 +73,7 @@ function ComposeLetter() {
     }
   }
   
-  const handleFileSelect = (e) => {
-    const file = e.target.files[0]
-    if (!file) return
-    
-    // Check file type (images only)
-    if (!file.type.startsWith('image/')) {
-      setErrors(prev => ({ ...prev, attachment: 'Please select an image file' }))
-      return
-    }
-    
-    // Check file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      setErrors(prev => ({ ...prev, attachment: 'Image size should be less than 5MB' }))
-      return
-    }
-    
-    setFormData(prev => ({ ...prev, attachment: file }))
-    setErrors(prev => ({ ...prev, attachment: '' }))
-  }
+
   
   const validateForm = () => {
     const newErrors = {}
@@ -214,46 +190,8 @@ const handleSend = async ({ recipients }) => {
               />
             </div>
             
-            <div className="compose-options">
-              <div className="option-group">
-                <button
-                  type="button"
-                  className="attachment-button"
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  <FaImage />
-                  <span>Add Image</span>
-                </button>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileSelect}
-                  accept="image/*"
-                  className="hidden-input"
-                />
-                {errors.attachment && (
-                  <p className="input-error">{errors.attachment}</p>
-                )}
-                {formData.attachment && (
-                  <p className="file-name">{formData.attachment.name}</p>
-                )}
-              </div>
-              
-              <div className="option-group">
-                <label className="schedule-label">
-                  <FaClock />
-                  <span>Schedule for later</span>
-                  <input
-                    type="datetime-local"
-                    value={scheduleDate}
-                    onChange={(e) => setScheduleDate(e.target.value)}
-                    className="schedule-input"
-                  />
-                </label>
-                {errors.scheduleDate && (
-                  <p className="input-error">{errors.scheduleDate}</p>
-                )}
-              </div>
+            <div className="compose-options"> 
+            
             </div>
             
            <div>

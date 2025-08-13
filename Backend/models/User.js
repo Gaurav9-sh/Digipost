@@ -71,6 +71,9 @@ const letterSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  attachment:{
+    type: String
+  },
   sentAt: {
     type: Date,
     default: Date.now,

@@ -8,6 +8,8 @@ import { FaBars, FaEnvelope, FaPaperPlane, FaGlobe } from 'react-icons/fa'
 import '../styles/pages/HomePage.css'
 import axios from 'axios'
 import { DataContext} from '../context/DataContext.jsx'
+import LetterCard2 from '../components/LetterCardRec.jsx'
+
 
 // Mock data for demo
 const DEMO_LETTERS = {
@@ -114,7 +116,7 @@ function HomePage() {
     }
   }, [location.search])
   console.log("tab details:",activeTab)
-  // Load letters based on active tab
+
 useEffect(() => {
   const fetchLetters = async () => {
     console.log("Hello")
@@ -208,13 +210,21 @@ useEffect(() => {
             
             {letters.length > 0 ? (
               <div className="letters-list">
-                {letters.map(letter => (
-                  <LetterCard 
-                    key={letter.id} 
-                    letter={letter}
-                    isPublic={activeTab === 'public'}
-                  />
-                ))}
+                {activeTab === 'outbox'
+    ? letters.map(letter => (
+        <LetterCard2
+          key={letter.id}
+          letter={letter}
+          isPublic={activeTab === 'public'}
+        />
+      ))
+    : letters.map(letter => (
+        <LetterCard
+          key={letter.id}
+          letter={letter}
+          isPublic={activeTab === 'public'}
+        />
+      ))}
               </div>
             ) : (
               <div className="empty-state">

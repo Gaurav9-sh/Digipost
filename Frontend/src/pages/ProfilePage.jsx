@@ -10,6 +10,7 @@ import Input from '../components/Input.jsx'
 import LetterCard2 from '../components/LetterCardRec.jsx'
 import { FaEdit, FaUserFriends, FaPaperPlane, FaGlobe, FaInbox } from 'react-icons/fa'
 import '../styles/pages/ProfilePage.css'
+import axios from 'axios'
 
 // Mock data for demo
 const DEMO_PROFILE = {
@@ -65,8 +66,7 @@ function ProfilePage() {
     avatar: null
   })
   const [errors, setErrors] = useState({})
-  console.log("get sent letters:", sentLetters)
-  // Update document title
+
   useEffect(() => {
     document.title = `${handle}'s Profile - Digital Postbox`
   }, [handle])
@@ -91,11 +91,12 @@ function ProfilePage() {
     setFormData({
       name: currentUser?.name || '',
       bio: profile?.bio || '',
-      profile_image: currentUser?.profile_image || null
+      profile_image: null
     })
     setIsEditModalOpen(true)
   }
-
+  
+  
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
@@ -118,11 +119,11 @@ function ProfilePage() {
 
     // Check file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      setErrors(prev => ({ ...prev, avatar: 'Image size should be less than 5MB' }))
+      setErrors(prev => ({ ...prev, avatar: 'Image size should be less than 10MB' }))
       return
     }
 
-    setFormData(prev => ({ ...prev, avatar: file }))
+    setFormData(prev => ({ ...prev, profile_image: file }))
     setErrors(prev => ({ ...prev, avatar: '' }))
   }
 
@@ -136,26 +137,41 @@ function ProfilePage() {
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  if (!validateForm()) return;
 
-    if (!validateForm()) return
+  setIsLoading(true);
 
-    setIsLoading(true)
-
-    try {
-      await updateProfile(formData)
-      setIsEditModalOpen(false)
-    } catch (error) {
-      setErrors(prev => ({
-        ...prev,
-        form: 'Failed to update profile. Please try again.'
-      }))
-    } finally {
-      setIsLoading(false)
+  try {
+    const data = new FormData();
+    data.append("name", formData.name);
+    data.append("bio", formData.bio);
+    if (formData.profile_image) {
+      data.append("profile_image", formData.profile_image); // ✅ append file
     }
+
+    await axios.put(
+      `http://localhost:5000/api/user/profile/${currentUser._id}`,
+      data,
+      {
+        withCredentials: true,
+        headers: { "Content-Type": "multipart/form-data" }
+      }
+    );
+
+    setIsEditModalOpen(false);
+  } catch (error) {
+    console.error("Profile update error:", error);
+    setErrors(prev => ({
+      ...prev,
+      form: "Failed to update profile. Please try again."
+    }));
+  } finally {
+    setIsLoading(false);
   }
+};
 
   if (!profile) {
     return (
@@ -192,7 +208,7 @@ function ProfilePage() {
                 <h1 className="profile-name">{profile.name}</h1>
                 <p className="profile-handle">@{profile.handle}</p>
 
-                {currentUser?.handle === handle && (
+                
                   <Button
                     variant="outline"
                     size="small"
@@ -202,7 +218,7 @@ function ProfilePage() {
                     <FaEdit />
                     Edit Profile
                   </Button>
-                )}
+                
               </div>
 
               <p className="profile-bio">{profile.bio}</p>
@@ -224,13 +240,6 @@ function ProfilePage() {
                   </div>
                 </div>
 
-                <div className="stat-item">
-                  <FaInbox className="stat-icon" />
-                  <div className="stat-details">
-                    <span className="stat-value">{profile.inbox.length}</span>
-                    <span className="stat-label">Inbox</span>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -326,15 +335,15 @@ function ProfilePage() {
               className="hidden-input"
             />
             <label htmlFor="avatar" className="avatar-upload-label">
-              <img
-                src={
-                  formData.avatar
-                    ? URL.createObjectURL(formData.avatar)
-                    : profile.avatar
-                }
-                alt="Profile avatar"
-                className="avatar-preview"
-              />
+             <img
+  src={
+    formData.profile_image
+      ? URL.createObjectURL(formData.profile_image) 
+      : profile.avatar
+  }
+  alt="Profile avatar"
+  className="avatar-preview"
+/>
               <div className="avatar-overlay">
                 <FaEdit />
                 <span>Change Photo</span>

@@ -7,7 +7,7 @@ function LetterCard({ letter, isPublic = true }) {
   const [liked, setLiked] = useState(letter.liked || false)
   const [likesCount, setLikesCount] = useState(letter.likes || 0)
 
-  console.log("Letter details from backend:", letter)
+ 
 
   const handleLike = (e) => {
     e.preventDefault()
@@ -38,7 +38,7 @@ function LetterCard({ letter, isPublic = true }) {
     }).format(date)
   }
 
-  // ✅ Get the first recipient (or fallback to empty object)
+ 
   const recipient = letter.recipients && letter.recipients.length > 0 ? letter.recipients[0] : {}
   console.log("Recipient details:",recipient)
   return (
