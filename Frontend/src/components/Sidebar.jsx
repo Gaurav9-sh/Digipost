@@ -67,7 +67,7 @@ function Sidebar({ isOpen, onClose }) {
           <FaGlobe className="nav-icon" />
           <span>Public Feed</span>
         </NavLink>
-        <NavLink to={`/profile/${currentUser?.handle}`} className="nav-item">
+        <NavLink to={`/profile/${currentUser?.handle_name}`} className="nav-item">
           <FaUser className="nav-icon" />
           <span>Profile</span>
         </NavLink>

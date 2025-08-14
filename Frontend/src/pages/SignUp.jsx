@@ -19,7 +19,7 @@ function SignUp() {
   
   const [errors, setErrors] = useState({})
   const [isLoading, setIsLoading] = useState(false)
-  const [previewImage, setPreviewImage] = useState('')
+  const [previewImage, setPreviewImage] = useState(null)
   const [passwordStrength, setPasswordStrength] = useState({
     score: 0,
     hasMinLength: false,
@@ -92,33 +92,33 @@ function SignUp() {
     })
   }
   
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0]
-    if (!file) return
-    
-    // Check file type
-    if (!file.type.match('image.*')) {
-      setErrors(prev => ({ ...prev, profile_image: 'Please select an image file' }))
-      return
-    }
-    
-    // Check file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      setErrors(prev => ({ ...prev, profile_image: 'Image size should be less than 5MB' }))
-      return
-    }
-    
-    setFormData(prev => ({ ...prev, profile_image: file }))
-    setErrors(prev => ({ ...prev, profile_image: '' }))
-    
-    // Create preview
-    const reader = new FileReader()
-    reader.onload = () => {
-      setPreviewImage(reader.result)
-    }
-    reader.readAsDataURL(file)
+const handleImageUpload = (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  // Validate type
+  if (!file.type.match('image.*')) {
+    setErrors(prev => ({ ...prev, profile_image: 'Please select an image file' }));
+    return;
   }
-  
+
+  // Validate size (max 5MB)
+  if (file.size > 5 * 1024 * 1024) {
+    setErrors(prev => ({ ...prev, profile_image: 'Image size should be less than 5MB' }));
+    return;
+  }
+
+  // Store file object only
+  setFormData(prev => ({ ...prev, profile_image: file }));
+  setErrors(prev => ({ ...prev, profile_image: '' }));
+
+  // Generate preview (for UI only)
+  const reader = new FileReader();
+  reader.onload = () => {
+    setPreviewImage(reader.result);
+  };
+  reader.readAsDataURL(file);
+};
   const triggerFileInput = () => {
     fileInputRef.current.click()
   }
@@ -166,17 +166,12 @@ function SignUp() {
     setIsLoading(true)
     
     try {
-      // In a real app, we would upload the profile_image to a storage service
-      // Here we're using the file directly
-      
-      // For demo purposes, we'll use a sample profile_image if none is provided
       const userData = { 
         ...formData,
         profile_image: previewImage || 'https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150'
       }
-      
+      // console.log("user details from frontend to authcontext:",userData)
       await signup(userData)
-      // Redirect happens automatically via the useEffect
     } catch (error) {
       setErrors(prev => ({ ...prev, form: error.message || 'Failed to sign up. Please try again.' }))
     } finally {
@@ -210,24 +205,29 @@ function SignUp() {
           )}
           
           <form onSubmit={handleSubmit} className="auth-form">
-            <div className="profile_image-upload">
-              <div 
-                className="profile_image-preview" 
-                onClick={triggerFileInput}
-                style={{ backgroundImage: previewImage ? `url(${previewImage})` : 'none' }}
-              >
-                {!previewImage && <FaCamera className="profile_image-icon" />}
-              </div>
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleImageUpload}
-                accept="image/*"
-                className="hidden-input"
-              />
-              <p className="profile_image-help">Click to upload profile picture</p>
-              {errors.profile_image && <p className="input-error">{errors.profile_image}</p>}
-            </div>
+           <div className="profile_image-upload">
+  <div
+    className="profile_image-preview"
+    onClick={triggerFileInput}
+    style={{
+      backgroundImage: previewImage ? `url(${previewImage})` : 'none',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center'
+    }}
+  >
+    {!previewImage && <FaCamera className="profile_image-icon" />}
+  </div>
+  <input
+    type="file"
+    ref={fileInputRef}
+    onChange={handleImageUpload}
+    accept="image/*"
+    className="hidden-input"
+  />
+  <p className="profile_image-help">Click to upload profile picture</p>
+  {errors.profile_image && <p className="input-error">{errors.profile_image}</p>}
+</div>
+
             
             <div className="form-row">
               <Input

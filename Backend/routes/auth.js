@@ -1,9 +1,12 @@
-const express = require('express');
-const router = express.Router();
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const {User} = require('../models/User.js');
+import express from 'express';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import { User } from '../models/User.js';
+import upload from '../middlewares/upload.js';
+import fs from 'fs';
+import cloudinary from '../config/cloudinary.js';
 
+const router = express.Router();
 
 router.get('/verify', async (req, res) => {
   // console.log(req.cookies); // Log all cookies to verify their presence
@@ -11,7 +14,7 @@ router.get('/verify', async (req, res) => {
   
   if (!token) {
     console.log("No token found in cookies");
-    return res.status(401).json({ message: 'Access denied. No token provided.' });
+    return res.status(401).json({ message: 'Access denied. No toaken provided.' });
   }
 
   try {
@@ -25,37 +28,66 @@ router.get('/verify', async (req, res) => {
   }
 });
 
-
-// Signup Route
-router.post('/signup', async (req, res) => {
+router.post('/signup', upload.single('profile_image'), async (req, res) => {
   try {
-    const { name, email, handle_name, password, confirm_password, profile_image } = req.body;
+    console.log("Hello from backend");
+    const { name, email, handle_name, password, confirm_password } = req.body;
 
-    // Check if passwords match
+    if (!name || !email || !handle_name || !password || !confirm_password) {
+      if (req.file) fs.unlinkSync(req.file.path);
+      return res.status(400).json({ message: 'All fields are required' });
+    }
     if (password !== confirm_password) {
+      if (req.file) fs.unlinkSync(req.file.path);
       return res.status(400).json({ message: 'Passwords do not match' });
     }
 
-    // Check if email or handle_name already exists
-    const existingUser = await User.findOne({ $or: [{ email }, { handle_name }] });
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: 'Email or handle name already taken' });
+      if (req.file) fs.unlinkSync(req.file.path);
+      return res.status(400).json({ message: 'Email already registered' });
     }
 
-    // Create new user
-    const user = new User({
+    // REMOVED: This line is no longer needed as hashing is handled by the pre-save middleware
+    // const hashedPassword = await bcrypt.hash(password, 10);
+
+    let profile_image_url = null;
+    
+    if (req.file) {
+      const uploadResult = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'profile_images',
+        // transformation: [{ width: 500, height: 500, crop: 'limit' }]
+      });
+      profile_image_url = uploadResult.secure_url;
+      
+      fs.unlinkSync(req.file.path);
+    }
+
+    const newUser = new User({
       name,
       email,
       handle_name,
-      password,
-      profile_image,
+      password: password, // Store the plaintext password to be hashed by the middleware
+      profile_image: profile_image_url
     });
 
-    await user.save();
-    res.status(201).json({ message: 'User created successfully' });
+    await newUser.save();
+
+    res.status(201).json({
+      message: 'User registered successfully',
+      user: {
+        id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        handle_name: newUser.handle_name,
+        profile_image: newUser.profile_image
+      }
+    });
+
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Signup error:', error);
+    if (req.file) fs.unlinkSync(req.file.path);
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 
@@ -63,7 +95,7 @@ router.post('/signin', async (req, res) => {
   try {
     
     const { handleOrEmail, password } = req.body;
-
+    console.log("user credentials:",req.body)
     // Find user by email or handle
     const user = await User.findOne({
       $or: [
@@ -99,7 +131,7 @@ router.post('/signin', async (req, res) => {
       id: user._id,
       name: user.name,
       email: user.email,
-      handle: user.handle_name,
+      handle_name: user.handle_name,
       profile_image: user.profile_image,
       bio:user.bio,
       followers:user.followers,
@@ -144,4 +176,5 @@ router.get('/user-info', async (req, res) => {
     res.status(500).json({ message: 'Server error while fetching users.' });
   }
 });
-module.exports = router;
+
+export default router;

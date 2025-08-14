@@ -51,7 +51,7 @@ function Header() {
         <nav className={`nav-links ${mobileMenuOpen ? 'open' : ''}`}>
           {isAuthenticated ? (
             <>
-              <Link to="/home\" className="nav-link">Home</Link>
+              <Link to="/home" className="nav-link">Home</Link>
               <Link to="/compose" className="nav-link">Compose</Link>
               <Link to={`/profile/${currentUser?.handle_name}`} className="nav-link">Profile</Link>
               <Link to="/settings" className="nav-link">Settings</Link>

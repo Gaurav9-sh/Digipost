@@ -12,6 +12,21 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate();
+  
+  function base64ToFile(base64String, fileName) {
+  const arr = base64String.split(',');
+  const mime = arr[0].match(/:(.*?);/)[1];
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+
+  return new File([u8arr], fileName, { type: mime });
+}
+
 
  useEffect(() => {
     const verifyUser = async () => {
@@ -64,23 +79,50 @@ const login = async (credentials) => {
   }
 };
 
-const signup = (userData) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      
-      const response = await axios.post('http://localhost:5000/api/auth/signup', userData);
-
-      const user = response.data; 
-      setCurrentUser(user);
-      setIsAuthenticated(false);
-      navigate('/signin')
-      resolve(user);
-    } catch (error) {
-      console.error('Error during signup:', error);
-      reject(error);
+const signup = async (userData) => {
+  try {
+    const fd = new FormData();
+    console.log("User details from signup page:",userData)
+    fd.append('name', userData.name);
+    fd.append('email', userData.email);
+    fd.append('handle_name', userData.handle_name);
+    fd.append('password', userData.password);
+    fd.append('confirm_password', userData.confirm_password);
+  
+     let profileFile = userData.profile_image;
+   if (typeof profileFile === "string" && profileFile.startsWith("data:image")) {
+      profileFile = base64ToFile(profileFile, "profile_image.jpg");
     }
-  });
+
+    if (profileFile instanceof File) {
+      fd.append('profile_image', profileFile);
+    }
+
+    // Debug FormData
+    for (let [key, value] of fd.entries()) {
+      console.log(key, value);
+    }
+    
+    const response = await axios.post(
+      'http://localhost:5000/api/auth/signup',
+      fd,
+      { headers: { 'Content-Type': 'multipart/form-data' } }
+    );
+
+    const user = response.data;
+    setCurrentUser(user);
+    setIsAuthenticated(false);
+    navigate('/signin');
+
+    return user;
+  } catch (error) {
+    console.error('Error during signup:', error);
+    throw error;
+  }
 };
+
+
+
 const logout = async () => {
   try {
     

@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 
 // User Schema
 const userSchema = new mongoose.Schema({
@@ -193,14 +193,15 @@ userSchema.pre('save', async function (next) {
 
 // Compare password method
 userSchema.methods.comparePassword = async function (candidatePassword) {
-  return await bcrypt.compare(candidatePassword, this.password);
+  console.log("candidate password:",candidatePassword)  
+  const res = await bcrypt.compare(candidatePassword, this.password);
+  console.log("Response of compare",res);
+  return res;
 };
 
 // Export models
-module.exports = {
-  User: mongoose.model('User', userSchema),
-  Post: mongoose.model('Post', postSchema),
-  Letters: mongoose.model('Letters',letterSchema),
-  publicletters:mongoose.model('publicletters',publicletterSchema),
-  publicFeed:mongoose.model('publicFeed',publicFeedSchema)
-};
+export const User = mongoose.model('User', userSchema);
+export const Letters = mongoose.model('Letters', letterSchema);
+export const publicletters = mongoose.model('publicletters', publicletterSchema);
+export const Post = mongoose.model('Post', postSchema);
+export const publicFeed = mongoose.model('publicFeed', publicFeedSchema);

@@ -1,8 +1,8 @@
-const express = require('express');
-const router = express.Router();
-const { Letters, publicletters } = require('../models/User.js');
-const {User} = require('../models/User.js');
+import express from 'express';
+import  { Letters, publicletters } from '../models/User.js'
+import { User } from '../models/User.js';
 
+const router = express.Router();
 // Middleware for error handling
 const asyncHandler = (fn) => (req, res, next) => {
   Promise.resolve(fn(req, res, next)).catch(next);
@@ -142,4 +142,4 @@ router.get(
 );
 
 
-module.exports = router;
+export default router;

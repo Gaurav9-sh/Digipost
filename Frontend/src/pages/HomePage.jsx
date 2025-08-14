@@ -104,22 +104,24 @@ function HomePage() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [activeTab, setActiveTab] = useState('inbox')
   const [letters, setLetters] = useState([])
- 
-  console.log("Inbox letters",inboxLetters)
+  
   
   // Get the active tab from URL query parameter or default to inbox
   useEffect(() => {
+    console.log("Location:",location)
     const searchParams = new URLSearchParams(location.search)
     const tab = searchParams.get('tab')
+    if(!tab)
+      setActiveTab('public')
     if (tab && ['inbox', 'outbox', 'public'].includes(tab)) {
       setActiveTab(tab)
     }
   }, [location.search])
-  console.log("tab details:",activeTab)
+  
 
 useEffect(() => {
   const fetchLetters = async () => {
-    console.log("Hello")
+    
     if (activeTab === 'public') {
       setLetters(publicLetters)
     } 
